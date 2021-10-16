@@ -1,29 +1,24 @@
-import { DatabaseService } from './database';
-import { DatabaseServiceInterface } from './interfaces';
-import { DatabaseRepository } from './repository';
+import "reflect-metadata"
+import { container, inject, injectable } from 'tsyringe'
+import { DatabaseServiceInterface, ExternalServiceInterface } from './fake_classes/interfaces'
+import './tsyringe-containers'
 
-class StartApp {
+@injectable()
+class Main {
   constructor(
-    private readonly database_service: DatabaseServiceInterface
-  ) {}
-  start(): void {
-    this.database_service.startDatabase()
-  }
+    @inject("DatabaseService") 
+    private readonly database: DatabaseServiceInterface,
 
-  stop(): void {
-    this.database_service.closeDatabase()
+    @inject("ExternalService") 
+    private readonly external_service: ExternalServiceInterface
+  ) {}
+
+  start(){
+    console.log('1º: ', this.database.start())
+    console.log('2º: ', this.external_service.connect())
+    console.log('3º: ', this.database.getInfoConnection())
   }
 }
-const database_repository = new DatabaseRepository()
-const database_service = new DatabaseService(database_repository)
-const start_app = new StartApp(database_service)
 
-// start app
-start_app.start()
-
-// get all users from fake database
-const all_users = database_service.findAll()
-console.log('all users: ', all_users)
-
-// close app
-start_app.stop()
+const main_app = container.resolve(Main)
+main_app.start();
