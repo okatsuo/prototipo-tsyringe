@@ -17,7 +17,13 @@ class StartApp {
 const database_repository = new DatabaseRepository()
 const database_service = new DatabaseService(database_repository)
 const start_app = new StartApp(database_service)
+
+// start app
 start_app.start()
+
+// get all users from fake database
 const all_users = database_service.findAll()
 console.log('all users: ', all_users)
+
+// close app
 start_app.stop()
